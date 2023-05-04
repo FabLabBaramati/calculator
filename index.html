@@ -2,55 +2,109 @@
 <html>
 <head>
 	<title>Laser Cut Cost Calculator</title>
+	<style>
+		form {
+			width: 400px;
+			margin: 0 auto;
+			font-size: 1.2rem;
+			font-family: Arial, sans-serif;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+
+		input[type="number"] {
+			padding: 5px;
+			width: 100%;
+			box-sizing: border-box;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+
+		button {
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 10px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		h1 {
+			text-align: center;
+			font-size: 2rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.result {
+			margin-top: 20px;
+			font-size: 1.2rem;
+			font-weight: bold;
+		}
+	</style>
 </head>
 <body>
 	<h1>Laser Cut Cost Calculator</h1>
-	<form>
+	<form id="calculator">
 		<label for="job-type">Job Type:</label>
-		<select id="job-type">
+		<select id="job-type" name="job-type">
 			<option value="cutting">Laser Cutting</option>
 			<option value="engraving">Laser Engraving</option>
 		</select>
-		<br>
-		<label for="material-cost">Material Cost per Square Foot (in Rs.):</label>
-		<input type="number" id="material-cost" min="0" step="0.01" required>
-		<br>
+
+		<label for="material-cost">Material Cost per Square Foot (in INR):</label>
+		<input type="number" id="material-cost" name="material-cost" step="0.01" required>
+
 		<label for="length">Length (in feet):</label>
-		<input type="number" id="length" min="0" step="0.01" required>
-		<br>
+		<input type="number" id="length" name="length" step="0.01" required>
+
 		<label for="width">Width (in feet):</label>
-		<input type="number" id="width" min="0" step="0.01" required>
-		<br>
-		<label for="tax-rate">Tax Rate (in %):</label>
-		<input type="number" id="tax-rate" min="0" max="100" step="0.01" value="0">
-		<br>
-		<label for="profit-percentage">Profit Percentage (in %):</label>
-		<input type="number" id="profit-percentage" min="0" step="0.01" value="0">
-		<br><br>
-		<button type="button" onclick="calculateCost()">Calculate Cost</button>
-		<br><br>
-		<p id="total-cost"></p>
+		<input type="number" id="width" name="width" step="0.01" required>
+
+		<label for="cutting-time">Cutting Time (in minutes):</label>
+		<input type="number" id="cutting-time" name="cutting-time" required>
+
+		<label for="tax-rate">Tax Rate:</label>
+		<input type="number" id="tax-rate" name="tax-rate" step="0.01" value="0">
+
+		<label for="profit-percentage">Profit Percentage:</label>
+		<input type="number" id="profit-percentage" name="profit-percentage" step="0.01" value="0">
+
+		<button type="submit">Calculate</button>
+
+		<div class="result" id="result"></div>
 	</form>
 
 	<script>
-		function calculateCost() {
-			const jobType = document.getElementById("job-type").value;
-			const materialCost = document.getElementById("material-cost").value;
-			const length = document.getElementById("length").value;
-			const width = document.getElementById("width").value;
-			const taxRate = document.getElementById("tax-rate").value / 100;
-			const profitPercentage = document.getElementById("profit-percentage").value / 100;
+		const calculator = document.querySelector('#calculator');
+		const result = document.querySelector('#result');
 
+		calculator.addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			const jobType = document.querySelector('#job-type').value;
+			const materialCost = parseFloat(document.querySelector('#material-cost').value);
+			const length = parseFloat(document.querySelector('#length').value);
+			const width = parseFloat(document.querySelector('#width').value);
+			const cuttingTime = parseFloat(document.querySelector('#cutting-time').value);
+			const taxRate = parseFloat(document.querySelector('#tax-rate').value) / 100;
+			const profitPercentage = parseFloat(document.querySelector('#profit-percentage').value) / 100;
 			const cuttingArea = length * width;
-			const materialCostPerSquareFoot = jobType === "cutting" ? materialCost * 1.2 : materialCost;
-			const subtotal = cuttingArea * materialCostPerSquareFoot;
+			const cuttingLength = (length + width) * 2;
+			const costPerSquareFoot = jobType === 'cutting' ? materialCost * 1.2 : materialCost;
+			const materialCostPerJob = cuttingArea * costPerSquareFoot;
+			const cuttingTimeCostPerMinute = 5; // in INR
+			const cuttingTimeCost = cuttingTime * cuttingTimeCostPerMinute;
+			const subtotal = materialCostPerJob + cuttingTimeCost;
 			const taxAmount = subtotal * taxRate;
 			const profitAmount = subtotal * profitPercentage;
 			const totalCost = subtotal + taxAmount + profitAmount;
 
-			const totalCostElement = document.getElementById("total-cost");
-			totalCostElement.innerHTML = `Total Cost: ₹${totalCost.toFixed(2)}`;
-		}
-	</script
-
+			result.textContent = `Total Cost: ${totalCost.toFixed(2)} INR`;
+	});
+</script>
 
