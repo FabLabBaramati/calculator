@@ -50,20 +50,20 @@
 <body>
 	<h1>Laser Cut Cost Calculator</h1>
 	<form id="calculator">
-		<label for="cutting-area">Total Cutting Area (in square inches):</label>
-		<input type="number" id="cutting-area" name="cutting-area" required>
+		<label for="cutting-area">Total Cutting Area (in square feet):</label>
+		<input type="number" id="cutting-area" name="cutting-area" step="0.01" required>
 		
-		<label for="material-cost">Material Cost per Square Inch:</label>
-		<input type="number" id="material-cost" name="material-cost" required>
+		<label for="material-cost">Material Cost per Square Foot (in INR):</label>
+		<input type="number" id="material-cost" name="material-cost" step="0.01" required>
 		
 		<label for="cutting-time">Cutting Time (in minutes):</label>
 		<input type="number" id="cutting-time" name="cutting-time" required>
 		
 		<label for="tax-rate">Tax Rate:</label>
-		<input type="number" id="tax-rate" name="tax-rate" value="0">
+		<input type="number" id="tax-rate" name="tax-rate" step="0.01" value="0">
 		
 		<label for="profit-percentage">Profit Percentage:</label>
-		<input type="number" id="profit-percentage" name="profit-percentage" value="0">
+		<input type="number" id="profit-percentage" name="profit-percentage" step="0.01" value="0">
 		
 		<button type="submit">Calculate</button>
 		
@@ -82,15 +82,17 @@
 			const taxRate = parseFloat(document.querySelector('#tax-rate').value) / 100;
 			const profitPercentage = parseFloat(document.querySelector('#profit-percentage').value) / 100;
 			
-			const laborCost = cuttingTime * 0.5; // Assumes $0.50 per minute
+			const laborCost = cuttingTime * 0.5; // Assumes 50 paise per minute
 			const totalMaterialCost = cuttingArea * materialCost;
 			const subtotal = laborCost + totalMaterialCost;
 			const taxAmount = subtotal * taxRate;
 			const profitAmount = subtotal * profitPercentage;
 			const totalCost = subtotal + taxAmount + profitAmount;
 			
-			result.textContent = `Total Cost: $${totalCost.toFixed(2)}`;
-		});
-	</script>
+			result.textContent = `Total Cost:₹${totalCost.toFixed(2)}`;
+});
+</script>
+
 </body>
 </html>
+
