@@ -2,59 +2,95 @@
 <html>
 <head>
 	<title>Laser Cut Cost Calculator</title>
+	<style>
+		form {
+			width: 400px;
+			margin: 0 auto;
+			font-size: 1.2rem;
+			font-family: Arial, sans-serif;
+		}
+		
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+		
+		input[type="number"] {
+			padding: 5px;
+			width: 100%;
+			box-sizing: border-box;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+		
+		button {
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 10px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			width: 100%;
+			margin-top: 10px;
+		}
+		
+		h1 {
+			text-align: center;
+			font-size: 2rem;
+			font-family: Arial, sans-serif;
+		}
+		
+		.result {
+			margin-top: 20px;
+			font-size: 1.2rem;
+			font-weight: bold;
+		}
+	</style>
 </head>
 <body>
 	<h1>Laser Cut Cost Calculator</h1>
-	<form>
-		<label for="material_area">Material Area:</label>
-		<input type="number" id="material_area" name="material_area">
-		<select id="material_unit">
-			<option value="mm2">mm<sup>2</sup></option>
-			<option value="ft2">ft<sup>2</sup></option>
-			<option value="in2">in<sup>2</sup></option>
-		</select>
-		<br><br>
-		<label for="material_cost">Material Cost per Area:</label>
-		<input type="number" id="material_cost" name="material_cost"> INR/<span id="material_unit_label"></span>
-		<br><br>
-		<label for="cutting_time">Cutting Time:</label>
-		<input type="number" id="cutting_time" name="cutting_time"> minutes
-		<br><br>
-		<label for="cutting_cost">Cutting Cost per Minute:</label>
-		<input type="number" id="cutting_cost" name="cutting_cost"> INR/minute
-		<br><br>
-		<button type="button" onclick="calculateCost()">Calculate Cost</button>
+	<form id="calculator">
+		<label for="cutting-area">Total Cutting Area (in square inches):</label>
+		<input type="number" id="cutting-area" name="cutting-area" required>
+		
+		<label for="material-cost">Material Cost per Square Inch:</label>
+		<input type="number" id="material-cost" name="material-cost" required>
+		
+		<label for="cutting-time">Cutting Time (in minutes):</label>
+		<input type="number" id="cutting-time" name="cutting-time" required>
+		
+		<label for="tax-rate">Tax Rate:</label>
+		<input type="number" id="tax-rate" name="tax-rate" value="0">
+		
+		<label for="profit-percentage">Profit Percentage:</label>
+		<input type="number" id="profit-percentage" name="profit-percentage" value="0">
+		
+		<button type="submit">Calculate</button>
+		
+		<div class="result" id="result"></div>
 	</form>
-	<br>
-	<p id="cost"></p>
-
 	<script>
-		function calculateCost() {
-			var materialArea = document.getElementById("material_area").value;
-			var materialUnit = document.getElementById("material_unit").value;
-			var materialCost = document.getElementById("material_cost").value;
-			var cuttingTime = document.getElementById("cutting_time").value;
-			var cuttingCost = document.getElementById("cutting_cost").value;
-
-			// Convert material area to sq ft if necessary
-			if (materialUnit === "mm2") {
-				materialArea = materialArea / 929.0304;
-			} else if (materialUnit === "in2") {
-				materialArea = materialArea / 144;
-			}
-
-			// Calculate cost
-			var materialCostTotal = materialArea * materialCost;
-			var cuttingCostTotal = cuttingTime * cuttingCost;
-			var totalCost = materialCostTotal + cuttingCostTotal;
-
-			// Display result
-			var resultText = "Total Cost: " + totalCost.toFixed(2) + " INR";
-			document.getElementById("cost").innerHTML = resultText;
-
-			// Update material unit label
-			document.getElementById("material_unit_label").innerHTML = materialUnit;
-		}
+		const calculator = document.querySelector('#calculator');
+		const result = document.querySelector('#result');
+		
+		calculator.addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			const cuttingArea = parseFloat(document.querySelector('#cutting-area').value);
+			const materialCost = parseFloat(document.querySelector('#material-cost').value);
+			const cuttingTime = parseFloat(document.querySelector('#cutting-time').value);
+			const taxRate = parseFloat(document.querySelector('#tax-rate').value) / 100;
+			const profitPercentage = parseFloat(document.querySelector('#profit-percentage').value) / 100;
+			
+			const laborCost = cuttingTime * 0.5; // Assumes $0.50 per minute
+			const totalMaterialCost = cuttingArea * materialCost;
+			const subtotal = laborCost + totalMaterialCost;
+			const taxAmount = subtotal * taxRate;
+			const profitAmount = subtotal * profitPercentage;
+			const totalCost = subtotal + taxAmount + profitAmount;
+			
+			result.textContent = `Total Cost: $${totalCost.toFixed(2)}`;
+		});
 	</script>
 </body>
 </html>
